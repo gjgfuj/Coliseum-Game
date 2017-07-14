@@ -15,12 +15,19 @@ function baseaction:damageCallback(char,other,damage)
 end
 local wait = util.p(baseaction)
 actions.wait = wait
-wait.name = "Wait"
-wait.description = "Do nothing, earns 1HP."
+wait.name = "Guard"
+wait.description = "Replensh Lost HP"
 wait.cost = 0
 function wait:main(char)
-    char.hp = char.hp + 1
+    if char.hp <= 100 then
+	   char.hp = char.hp + 20
+	   end
 end
+local Nothing = util.p(baseaction)
+actions.Nothing = Nothing
+Nothing.name = "DoNothing"
+Nothing.description = "Debug"
+Nothing.cost = 0
 local absorb = util.p(baseaction)
 actions.absorb = absorb
 absorb.name = "Absorb Damage"
@@ -44,28 +51,28 @@ function attack:main(char, other)
 end
 local attack3 = util.p(attack)
 actions.attack3 = attack3
-attack3.name = "Attack (3)"
-attack3.description = "Deals a base 3 damage to target."
-attack3.cost = 5
-attack3.damage = 3
+attack3.name = "Quick Attack"
+attack3.description = "Quickly attack the target"
+attack3.cost = 2
+attack3.damage = 5
 local attack5 = util.p(attack)
 actions.attack5 = attack5
-attack5.name = "Attack (5)"
+attack5.name = "Basic Attack"
 attack5.description = "Deals a base 5 damage to target."
-attack5.cost = 10
-attack5.damage = 5
+attack5.cost = 4
+attack5.damage = 8
 local attack10 = util.p(attack)
 actions.attack10 = attack10
-attack10.name = "Attack (10)"
-attack10.description = "Deals a base 10 damage to target."
-attack10.damage = 10
-attack10.cost = 30
+attack10.name = "Broad Attack"
+attack10.description = "(Only does Single target, but set up for numbers)"
+attack10.damage = 3
+attack10.cost = 10
 local attack20 = util.p(attack)
 actions.attack20 = attack20
-attack20.name = "Attack (20)"
-attack20.description = "Deals a base 20 damage to target."
-attack20.damage = 20
-attack20.cost = 50
+attack20.name = "Charge Attack"
+attack20.description = "(Doesn't work, set up for numbers)"
+attack20.damage = 15
+attack20.cost = 5
 
 local healself = util.p(baseaction)
 actions.healself = healself
