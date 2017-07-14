@@ -20,7 +20,7 @@ wait.description = "Replensh Lost HP"
 wait.cost = 0
 function wait:main(char)
     if char.hp <= 100 then
-	   char.hp = char.hp + 20
+	   char.hp = char.hp + 14
 	   end
 end
 local Nothing = util.p(baseaction)
