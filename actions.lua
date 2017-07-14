@@ -16,22 +16,21 @@ end
 local wait = util.p(baseaction)
 actions.wait = wait
 wait.name = "Wait"
-wait.description = "Do nothing, earns 1AP."
+wait.description = "Do nothing, earns 1HP."
 wait.cost = 0
 function wait:main(char)
-    char.ap = char.ap + 1
+    char.hp = char.hp + 1
 end
 local absorb = util.p(baseaction)
 actions.absorb = absorb
 absorb.name = "Absorb Damage"
-absorb.description = "Absorbs damage as AP, where -1HP = +1AP."
+absorb.description = "Absorbs damage completely."
 absorb.cost = 10
 function absorb:pre(char, target)
     self.predamage = char.hp
 end
 function absorb:post(char, target)
-    char.ap = char.ap + (self.predamage - char.hp)
-    if char.ap < 0 then char.ap = 0 end
+    char.hp = self.predamage
 end
 
 local attack = util.p(baseaction)

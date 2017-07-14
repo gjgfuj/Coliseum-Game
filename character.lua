@@ -5,7 +5,7 @@ character = {}
 characters.base = character
 character.name = "Base Character."
 character.description = "Undefined."
-character.ap = 0
+--character.ap = 0
 character.hp = 0
 character.controllable = false
 character.currentaction = nil
@@ -43,7 +43,7 @@ characters.player = player
 player.name = "Player"
 player.description = "You."
 player.hp = 10
-player.ap = 20
+--player.ap = 20
 player.controllable = true
 player.winaction = actions.absorb
 player:addAction(actions.wait)

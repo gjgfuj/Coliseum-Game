@@ -45,7 +45,7 @@ function actionbutton(character, action, x,y)
     b.y = y
     function b:action()
         if character.controllable then
-            if not gamestate.targeting and character.ap >= action.cost then
+            if not gamestate.targeting and character.hp > action.cost then
                 character.currentaction = action
                 if action.targeting then
                     gamestate.targeting = character
@@ -103,7 +103,7 @@ function processTurn()
     end
     for _,character in ipairs(gamestate.characters) do
         character.currentaction:main(character, character.currenttarget)
-        character.ap = character.ap - character.currentaction.cost
+        character.hp = character.hp - character.currentaction.cost
     end
     for _,character in ipairs(gamestate.characters) do
         character.currentaction:post(character, character.currenttarget)
@@ -145,7 +145,7 @@ function love.draw()
         height = height + 30
         love.graphics.print("HP: "..tostring(character.hp), offset, 80)
         height = height + 30
-        love.graphics.print("AP: "..tostring(character.ap), offset, 110)
+        --love.graphics.print("AP: "..tostring(character.ap), offset, 110)
         offset = offset + 200
     end
     for k,button in ipairs(buttons) do
