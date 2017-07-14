@@ -1,19 +1,25 @@
 require("util")
 require("actions")
 characters = {}
-character = {}
+local character = {}
 characters.base = character
 character.name = "Base Character."
 character.description = "Undefined."
+setmetatable(character,{})
+getmetatable(character).__subcopy = {"actions"}
 --character.ap = 0
-character.hp = 0
+character.hp = 10
 character.controllable = false
 character.currentaction = nil
 character.currenttarget = nil
 character.actions = {}
 character.winaction = actions.wait
 function character:addAction(action)
-    self.actions[action.name] = util.p(action)
+    for k,v in ipairs(self.actions) do
+        if v.name == action.name then return nil end
+    end
+    table.insert(self.actions,util.p(action))
+    table.sort(self.actions, function(a, b) return a.cost < b.cost end)
 end
 function character:getActions()
     return self.actions
@@ -23,7 +29,12 @@ function character:victory(other)
 end
 function character:die(other)
     other:victory(self)
-    for k,v in ipairs(gamestate.characters) do
+    if other == self then
+        gamestate.log(self.name.." was killed.")
+    else
+        gamestate.log(self.name.." was killed by "..other.name)
+    end
+    for k,v in pairs(gamestate.characters) do
         if v == self then
             table.remove(gamestate.characters, k)
         end

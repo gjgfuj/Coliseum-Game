@@ -1,8 +1,9 @@
 require("util")
 require("actions")
 require("character")
+require("button")
 gamestate = {}
-gamestate.characters = {util.p(characters.player), util.p(characters.player)}
+gamestate.characters = {util.p(characters.player), util.p(characters.player), util.p(characters.player), util.p(characters.player)}
 gamestate.targeting = nil
 gamestate.log = {}
 lmeta = {}
@@ -14,29 +15,6 @@ end
 function gamestate:addCharacter(c)
     table.insert(gamestate.characters,c)
 end
-
-button = {}
-button.x = 0
-button.y = 0
-function button:getWidth()
-    return love.graphics.getFont():getWidth(self.text)
-end
-function button:getHeight()
-    return love.graphics.getFont():getHeight()
-end
-button.text = "Button"
-button.description = ""
-function button:action()
-end
-function button:draw()
-    love.graphics.print(self.text, self.x, self.y)
-    local x = love.mouse.getX()
-    local y = love.mouse.getY()
-    if x >= self.x and x <= self.x + self:getWidth() + 2 and y >= self.y and y <= self.y + self:getHeight() + 2 then
-        love.graphics.print(self.description, 10,love.graphics.getHeight()-25)
-    end
-end
-buttons = {}
 function actionbutton(character, action, x,y)
     b = util.p(button)
     b.text = action.name
@@ -52,7 +30,7 @@ function actionbutton(character, action, x,y)
                         gamestate.targeting = character
                     end
                 else
-                    gamestate.log(tostring(action.cost-character.hp).." too few HP to use this move.")
+                    gamestate.log(tostring(action.cost-character.hp+1).." too few HP to use this move.")
                 end
             end
         end
@@ -80,10 +58,31 @@ function love.mousepressed(x,y,b)
         end 
     end
 end
-function beginTurn()
+function scrollbutton(t,positive,text,description,x,y)
+    b = util.p(button)
+    b.x = x
+    b.y = y
+    b.text = text
+    b.description = description
+    function b:action()
+        if positive then
+            table.insert(t,table.remove(t,1))
+        else
+            table.insert(t,1,table.remove(t))
+        end
+        setupButtons()
+    end
+    return b
+end
+function setupButtons()
     buttons = {}
-    local offset = 10
-    for _,character in ipairs(gamestate.characters) do
+    local offset = 20
+    for k,character in ipairs(gamestate.characters) do
+        if character.hp <= 0 then
+            character:die(character)
+        end
+    end
+    for k,character in ipairs(gamestate.characters) do
         character.currentaction = nil
         character.currenttarget = nil
         local height = 50
@@ -93,19 +92,26 @@ function beginTurn()
             table.insert(buttons, actionbutton(character, action,offset,height))
             height = height + 40
         end
+        table.insert(buttons, scrollbutton(character.actions, true, "\\/", "Move the list of actions down.",offset+170, 150))
+        table.insert(buttons, scrollbutton(character.actions, false, "/\\", "Move the list of actions up.", offset+170, love.graphics.getHeight()-50))
         offset = offset + 200
     end
+    table.insert(buttons, scrollbutton(gamestate.characters, true, "->", "Move the list of characters to the right.", love.graphics.getWidth()-230, 0))
+    table.insert(buttons, scrollbutton(gamestate.characters, false, "<-", "Move the list of characters to the left.", 0, 0))
+end
+function beginTurn()
+    setupButtons()
 end
 function processTurn()
-    for _,character in ipairs(gamestate.characters) do
+    for k,character in ipairs(gamestate.characters) do
         if not character.currentaction or (character.currentaction.targeting and not character.currenttarget) then return false end
     end
-    for _,character in ipairs(gamestate.characters) do
+    for k,character in ipairs(gamestate.characters) do
+        character.hp = character.hp - character.currentaction.cost
         character.currentaction:pre(character, character.currenttarget)
     end
     for _,character in ipairs(gamestate.characters) do
         character.currentaction:main(character, character.currenttarget)
-        character.hp = character.hp - character.currentaction.cost
     end
     for _,character in ipairs(gamestate.characters) do
         character.currentaction:post(character, character.currenttarget)
@@ -121,6 +127,12 @@ function love.load()
 end
 function love.update()
     processTurn()
+    for k,character in ipairs(gamestate.characters) do
+        if character.hp <= 0 then
+            character:die(character)
+            setupButtons()
+        end
+    end
 end
 function filterConsole(a)
     local s = a.string
@@ -132,15 +144,15 @@ function filterConsole(a)
     end
 end
 function love.draw()
-    local offset = 10
+    local offset = 20
     for k,character in ipairs(gamestate.characters) do
         local height = 50
         if gamestate.targeting == character then
-            love.graphics.print("Targeting", offset, 0)
+            love.graphics.print("Targeting", offset, 20)
         elseif character.currentaction and (not character.currentaction.targeting or character.currenttarget) then
-            love.graphics.print("Ready", offset, 0)
+            love.graphics.print("Ready", offset, 20)
         else
-            love.graphics.print("Deciding", offset, 0)
+            love.graphics.print("Deciding", offset, 20)
         end
         love.graphics.setFont(fontSmall)
         love.graphics.print(character.name, offset, height)

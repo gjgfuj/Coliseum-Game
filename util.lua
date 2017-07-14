@@ -9,7 +9,19 @@ function util.map(f, t)
 end
 function util.p(t)
     local nt = {}
-    if getmetatable(nt) == nil then setmetatable(nt,{}) end
+    setmetatable(nt,{})
+    if not getmetatable(t) then setmetatable(t, {}) end
+    local mt = getmetatable(t)
+    if mt.__subcopy then
+        for _,v in pairs(mt.__subcopy) do
+            nt[v] = {}
+            for k,v2 in pairs(t[v]) do
+                nt[v][k] = v2
+            end
+        end
+    end
     getmetatable(nt).__index = t
+    setmetatable(getmetatable(nt),{})
+    getmetatable(getmetatable(nt)).__index = getmetatable(t)
     return nt
 end
