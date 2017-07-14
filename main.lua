@@ -51,7 +51,7 @@ function actionbutton(character, action, x,y)
                     gamestate.targeting = character
                 end
             else
-                gamestate.log(tostring(action.cost-character.ap).." too few AP to use this move.")
+                gamestate.log(tostring(action.cost-character.hp).." too few HP to use this move.")
             end
         end
     end
