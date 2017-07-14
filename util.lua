@@ -7,6 +7,7 @@ function util.map(f, t)
 
     return t2
 end
+util.__ptid = 0
 function util.p(t)
     local nt = {}
     setmetatable(nt,{})
@@ -21,6 +22,8 @@ function util.p(t)
         end
     end
     getmetatable(nt).__index = t
+    getmetatable(nt).__ptid = util.__ptid
+    util.__ptid = util.__ptid + 1
     setmetatable(getmetatable(nt),{})
     getmetatable(getmetatable(nt)).__index = getmetatable(t)
     return nt

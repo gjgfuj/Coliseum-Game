@@ -106,6 +106,7 @@ function processTurn()
     for k,character in ipairs(gamestate.characters) do
         if not character.currentaction or (character.currentaction.targeting and not character.currenttarget) then return false end
     end
+    table.sort(gamestate.characters, function(a,b) return getmetatable(a).__ptid < getmetatable(b).__ptid end)
     for k,character in ipairs(gamestate.characters) do
         character.hp = character.hp - character.currentaction.cost
         character.currentaction:pre(character, character.currenttarget)

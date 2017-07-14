@@ -14,6 +14,7 @@ character.currentaction = nil
 character.currenttarget = nil
 character.actions = {}
 character.winaction = actions.wait
+character.winhp = 0
 function character:addAction(action)
     for k,v in ipairs(self.actions) do
         if v.name == action.name then return nil end
@@ -26,6 +27,7 @@ function character:getActions()
 end
 function character:victory(other)
     self:addAction(other.winaction)
+    self.hp = self.hp + other.winhp
 end
 function character:die(other)
     other:victory(self)
