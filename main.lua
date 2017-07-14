@@ -4,9 +4,15 @@ require("character")
 gamestate = {}
 gamestate.characters = {util.p(characters.player), util.p(characters.player)}
 gamestate.targeting = nil
-
+gamestate.log = {}
+lmeta = {}
+setmetatable(gamestate.log,lmeta)
+function lmeta:__call(s)
+    table.insert(gamestate.log, 1, {string=s, time=love.timer.getTime()})
+    print(s)
+end
 function gamestate:addCharacter(c)
-    gamestate.characters.insert(c)
+    table.insert(gamestate.characters,c)
 end
 
 button = {}
@@ -44,6 +50,8 @@ function actionbutton(character, action, x,y)
                 if action.targeting then
                     gamestate.targeting = character
                 end
+            else
+                gamestate.log(tostring(action.cost-character.ap).." too few AP to use this move.")
             end
         end
     end
@@ -112,6 +120,15 @@ end
 function love.update()
     processTurn()
 end
+function filterConsole(a)
+    local s = a.string
+    local timer = a.time
+    if love.timer.getTime() - timer > 10 then
+        return ""
+    else
+        return s
+    end
+end
 function love.draw()
     local offset = 10
     for k,character in ipairs(gamestate.characters) do
@@ -134,4 +151,5 @@ function love.draw()
     for k,button in ipairs(buttons) do
         button:draw()
     end
+    love.graphics.printf(table.concat(util.map(filterConsole, gamestate.log), "\n"),love.graphics.getWidth()-200, 10,195)
 end

@@ -40,6 +40,7 @@ attack.damage = 0
 attack.atype = "attack"
 attack.targeting = true
 function attack:main(char, other)
+    gamestate.log(char.name.." attacks "..other.name.." for "..tostring(self.damage).." damage.")
     other:takeDamage(char, self.damage)
 end
 local attack3 = util.p(attack)
@@ -74,6 +75,7 @@ healself.description = "Heals self for a certain amount.\nThis should not be rig
 healself.amount = 0
 function healself:main(char)
     char.hp = char.hp + self.amount
+    gamestate.log(char.name.." heals themself for "..tostring(self.amount).." HP.")
 end
 local healself5 = util.p(healself)
 actions.healself5 = healself5
