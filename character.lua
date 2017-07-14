@@ -45,6 +45,7 @@ player.description = "You."
 player.hp = 10
 player.ap = 20
 player.controllable = true
+player.winaction = actions.absorb
 player:addAction(actions.wait)
 player:addAction(actions.attack3)
 player:addAction(actions.attack5)
@@ -53,4 +54,3 @@ player:addAction(actions.attack20)
 player:addAction(actions.healself5)
 player:addAction(actions.healtarget5)
 player:addAction(actions.healtarget10)
-player:addAction(actions.absorb)

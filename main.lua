@@ -38,10 +38,12 @@ function actionbutton(character, action, x,y)
     b.x = x
     b.y = y
     function b:action()
-        if character.controllable and not gamestate.targeting and character.ap >= action.cost then
-            character.currentaction = action
-            if action.targeting then
-                gamestate.targeting = character
+        if character.controllable then
+            if not gamestate.targeting and character.ap >= action.cost then
+                character.currentaction = action
+                if action.targeting then
+                    gamestate.targeting = character
+                end
             end
         end
     end
