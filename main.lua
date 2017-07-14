@@ -45,13 +45,15 @@ function actionbutton(character, action, x,y)
     b.y = y
     function b:action()
         if character.controllable then
-            if not gamestate.targeting and character.hp > action.cost then
-                character.currentaction = action
-                if action.targeting then
-                    gamestate.targeting = character
+            if not gamestate.targeting then
+                if character.hp > action.cost then
+                    character.currentaction = action
+                    if action.targeting then
+                        gamestate.targeting = character
+                    end
+                else
+                    gamestate.log(tostring(action.cost-character.hp).." too few HP to use this move.")
                 end
-            else
-                gamestate.log(tostring(action.cost-character.hp).." too few HP to use this move.")
             end
         end
     end
@@ -113,7 +115,7 @@ function processTurn()
 end
 
 function love.load()
-    love.window.setMode(1024,576)
+    love.window.setMode(1024,576, {resizable=true})
     fontSmall = love.graphics.newFont(20)
     beginTurn()
 end
